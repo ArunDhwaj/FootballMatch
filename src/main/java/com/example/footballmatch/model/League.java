@@ -12,9 +12,9 @@ public class League extends Country
     @JsonProperty("league_name")
     private String leagueName;
 
-    @JsonProperty("league_season")
-    private String leagueSeason;
+    @JsonProperty("country_id")
+    private String countryId;
 
-    @JsonProperty("league_logo")
-    private String leagueLogo;
+    @JsonProperty("country_name")
+    private String countryName;
 }
