@@ -1,13 +1,11 @@
 package com.example.footballmatch.service;
 
-import org.json.JSONException;
+import com.example.footballmatch.exceptionalhandling.ResourceNotFoundException;
+import com.example.footballmatch.model.FinalStandingResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 
 public interface FootballServiceInterface
 {
-    public String getCountriesListings();
-
-    public String getLeagueId(String countryId) throws JSONException;
-
-    public String getStandings(String leagueId) throws JSONException;
-
+    FinalStandingResponse getTeamStandings(String countryName, String leagueName, String teamName) throws JsonProcessingException, ResourceNotFoundException;
 }
