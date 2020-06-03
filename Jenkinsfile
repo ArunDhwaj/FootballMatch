@@ -8,7 +8,7 @@ pipeline {
        PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
     }
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
                 sh 'mvn --version'
                 sh 'docker version'
@@ -20,12 +20,7 @@ pipeline {
                 echo "BUILD_TAG - $env.BUILD_TAG"
                 echo "BUILD_URL - $env.BUILD_URL"
             }
-        }
-        stage('Compile') {
-            steps {
-                sh "mvn clean compile"
-            }
-        }
+        }        
         stage('Test') {
             steps {
                 echo "Test"
@@ -38,7 +33,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                //docker build -t arundhwaj/FootballMatch:Prod-v1
+                docker build -t arundhwaj/FootballMatch:Prod-v1
                 script {
                     dockerImage = docker.build("arundhwaj/FootballMatch:${env.BUILD_TAG}")
                 }
@@ -47,7 +42,11 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    dockerImage.push('latest')
+                    docker.withRegistry('', 'myDockerHub') {
+                        dockerImage.push()
+                        dockerImage.push('latest')
+                    }
+                
                 }
             }
         }
