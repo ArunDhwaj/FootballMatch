@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                docker build -t arundhwaj/FootballMatch:Prod-v1
+                //docker build -t arundhwaj/FootballMatch:Prod-v1
                 script {
                     dockerImage = docker.build("arundhwaj/FootballMatch:${env.BUILD_TAG}")
                 }
