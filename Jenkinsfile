@@ -21,6 +21,11 @@ pipeline {
                 echo "BUILD_URL - $env.BUILD_URL"
             }
         }
+        stage('Compile') {
+            steps {
+                sh "mvn clean compile"
+            }
+        }
         stage('Test') {
             steps {
                 echo "Test"
@@ -29,6 +34,21 @@ pipeline {
         stage('Integration Test') {
             steps {
                 echo "Integration Test"
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                //docker build -t arundhwaj/FootballMatch:Prod-v1
+                script {
+                    dockerImage = docker.build("arundhwaj/FootballMatch:${env.BUILD_TAG}")
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    dockerImage.push('latest')
+                }
             }
         }
     }
