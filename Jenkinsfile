@@ -35,7 +35,7 @@ pipeline {
             steps {
                 //docker build -t arundhwaj/FootballMatch:Prod-v1
                 script {
-                    dockerImage = docker.build("arundhwaj/FootballMatch:${env.BUILD_TAG}")
+                    dockerImage = docker.build("arundhwaj/footballmatch:${env.BUILD_TAG}")
                 }
             }
         }
