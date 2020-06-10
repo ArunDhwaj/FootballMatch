@@ -2,7 +2,7 @@ pipeline {
 environment {
 registry = "arundhwaj/footballmatch"
 registryCredential = 'dockerhub'
-dockerImage = ''
+dockerImage = 'myDocker'
 }
 agent any
 stages {
