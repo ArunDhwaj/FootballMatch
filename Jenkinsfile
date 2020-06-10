@@ -1,66 +1,36 @@
-//DECLARATIVE
 pipeline {
-    agent any
-    //agent { myDockerHub { image 'maven:3.6.3'}}
-    environment{
-       dockerHome = tool 'myDocker'
-       mavenHome = tool 'myMaven'
-       PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                sh 'mvn --version'
-                sh 'docker version'
-                echo "Build"
-                echo "PATH - $PATH"
-                echo "Build_NUMBER - $env.BUILD_NUMBER"
-                echo "Build_ID - $env.BUILD_ID"
-                echo "JOB_NAME - $env.JOB_NAME"
-                echo "BUILD_TAG - $env.BUILD_TAG"
-                echo "BUILD_URL - $env.BUILD_URL"
-            }
-        }        
-        stage('Test') {
-            steps {
-                echo "Test"
-            }
-        }
-        stage('Integration Test') {
-            steps {
-                echo "Integration Test"
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                //docker build -t arundhwaj/FootballMatch:Prod-v1
-                script {
-                    dockerImage = docker.build("arundhwaj/footballmatch:${env.BUILD_TAG}")
-                }
-            }
-        }
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    docker.withRegistry('', 'dockerhub') {
-                        dockerImage.push();
-                        dockerImage.push('latest');
-                    }
-                
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            echo 'I run always'
-        }
-        success {
-            echo 'I run when i m suceessful'
-        }
-        failure {
-            echo 'I run when i m failure'
-        }
-    }
+environment {
+registry = "arundhwaj/footballmatch"
+registryCredential = 'dockerhub'
+dockerImage = ''
+}
+agent any
+stages {
+stage('Cloning our Git') {
+steps {
+git 'https://github.com/ArunDhwaj/footballmatch'
+}
+}
+stage('Building our image') {
+steps{
+script {
+dockerImage = docker.build registry + ":$BUILD_NUMBER"
+}
+}
+}
+stage('Deploy our image') {
+steps{
+script {
+docker.withRegistry( '', registryCredential ) {
+dockerImage.push()
+}
+}
+}
+}
+stage('Cleaning up') {
+steps{
+sh "docker rmi $registry:$BUILD_NUMBER"
+}
+}
+}
 }
